@@ -55,8 +55,15 @@ public:
 
     static juce::AudioProcessorValueTreeState::ParameterLayout createParameters();  
     juce::AudioProcessorValueTreeState apvts{*this,nullptr,"Parameters",createParameters()};
-    
+
 private:
+
+    static const unsigned int nChannels = 2 ;
+
+    float low[nChannels],
+          band[nChannels],
+          high[nChannels];
+
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SVFAudioProcessor)
 };

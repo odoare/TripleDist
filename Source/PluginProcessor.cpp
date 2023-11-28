@@ -95,6 +95,12 @@ void SVFAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
+    for (unsigned int n=0;n<SVFAudioProcessor::nChannels;n++)
+    {
+        SVFAudioProcessor::low[n]=0.0f;
+        SVFAudioProcessor::band[n]=0.0f;
+        SVFAudioProcessor::high[n]=0.0f;
+    }
 }
 
 void SVFAudioProcessor::releaseResources()
@@ -135,6 +141,20 @@ void SVFAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Mi
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
 
+    auto freq = apvts.getRawParameterValue("Frequency")->load();
+    auto q = apvts.getRawParameterValue("Q")->load();
+    auto lowg = apvts.getRawParameterValue("LowGain")->load();
+    auto bandg = apvts.getRawParameterValue("BandGain")->load();
+    auto highg = apvts.getRawParameterValue("HighGain")->load();
+    auto lowl = apvts.getRawParameterValue("LowLevel")->load();
+    auto bandl = apvts.getRawParameterValue("BandLevel")->load();
+    auto highl = apvts.getRawParameterValue("HighLevel")->load();
+    auto lowp = apvts.getRawParameterValue("LowPan")->load();
+    auto bandp = apvts.getRawParameterValue("BandPan")->load();
+    auto highp = apvts.getRawParameterValue("HighPan")->load();
+
+    auto f = 2 * sin(3.1415927 * freq / SVFAudioProcessor::getSampleRate());
+    
     // In case we have more outputs than inputs, this code clears any output
     // channels that didn't contain input data, (because these aren't
     // guaranteed to be empty - they may contain garbage).
@@ -152,9 +172,22 @@ void SVFAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Mi
     // interleaved by keeping the same state.
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
+        
+        auto lp = ((1-channel)+(2*channel-1)*lowp)*lowg ;
+        auto bp = ((1-channel)+(2*channel-1)*bandp)*bandg ;
+        auto hp = ((1-channel)+(2*channel-1)*highp)*highg ;
+
         auto* channelData = buffer.getWritePointer (channel);
 
-        // ..do something to the data...
+        for (int sample=0; sample<buffer.getNumSamples(); ++sample)
+        {
+            low[channel] = low[channel] + f * band[channel];
+            high[channel] = channelData[sample] - low[channel] - q*band[channel];
+            band[channel] = f * high[channel] + band[channel];
+            channelData[sample] =  lowl*tanh(lp*low[channel])
+                                    + bandl*tanh(bp*band[channel])
+                                    + highl*tanh(hp*high[channel]);
+        }
     }
 }
 
@@ -202,9 +235,15 @@ juce::AudioProcessorValueTreeState::ParameterLayout SVFAudioProcessor::createPar
     juce::AudioProcessorValueTreeState::ParameterLayout layout;
     layout.add(std::make_unique<juce::AudioParameterFloat>("Frequency","Frequency",20.0f,10000.0f,1000.0f));
     layout.add(std::make_unique<juce::AudioParameterFloat>("Q","Q",0.01f,1.0f,0.5f));
-    layout.add(std::make_unique<juce::AudioParameterFloat>("LowLevel","LowLevel",0.0f,1.0f,0.5f));
-    layout.add(std::make_unique<juce::AudioParameterFloat>("BandLevel","BandLevel",0.0f,1.0f,0.5f));
-    layout.add(std::make_unique<juce::AudioParameterFloat>("HighLevel","HughLevel",0.0f,1.0f,0.5f));
+    layout.add(std::make_unique<juce::AudioParameterFloat>("LowGain","LowGain",0.0f,10.0f,1.0f));
+    layout.add(std::make_unique<juce::AudioParameterFloat>("BandGain","BandGain",0.0f,10.0f,1.0f));
+    layout.add(std::make_unique<juce::AudioParameterFloat>("HighGain","HighGain",0.0f,10.0f,1.0f));
+    layout.add(std::make_unique<juce::AudioParameterFloat>("LowLevel","LowLevel",0.0f,2.0f,1.0f));
+    layout.add(std::make_unique<juce::AudioParameterFloat>("BandLevel","BandLevel",0.0f,2.0f,1.0f));
+    layout.add(std::make_unique<juce::AudioParameterFloat>("HighLevel","HighLevel",0.0f,2.0f,1.0f));
+    layout.add(std::make_unique<juce::AudioParameterFloat>("LowPan","LowPan",0.0f,1.0f,0.5f));
+    layout.add(std::make_unique<juce::AudioParameterFloat>("BandPan","BandPan",0.0f,1.0f,0.5f));
+    layout.add(std::make_unique<juce::AudioParameterFloat>("HighPan","HighPan",0.0f,1.0f,0.5f));
 
     return layout;
 }
