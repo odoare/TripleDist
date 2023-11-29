@@ -143,17 +143,17 @@ void SVFAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Mi
 
     auto freq = apvts.getRawParameterValue("Frequency")->load();
     auto q = apvts.getRawParameterValue("Q")->load();
-    auto lowg = apvts.getRawParameterValue("LowGain")->load();
-    auto bandg = apvts.getRawParameterValue("BandGain")->load();
-    auto highg = apvts.getRawParameterValue("HighGain")->load();
-    auto lowl = apvts.getRawParameterValue("LowLevel")->load();
-    auto bandl = apvts.getRawParameterValue("BandLevel")->load();
-    auto highl = apvts.getRawParameterValue("HighLevel")->load();
+    auto lowg = juce::Decibels::decibelsToGain(apvts.getRawParameterValue("LowGain")->load());
+    auto bandg = juce::Decibels::decibelsToGain(apvts.getRawParameterValue("BandGain")->load());
+    auto highg = juce::Decibels::decibelsToGain(apvts.getRawParameterValue("HighGain")->load());
+    auto lowl = juce::Decibels::decibelsToGain(apvts.getRawParameterValue("LowLevel")->load());
+    auto bandl = juce::Decibels::decibelsToGain(apvts.getRawParameterValue("BandLevel")->load());
+    auto highl = juce::Decibels::decibelsToGain(apvts.getRawParameterValue("HighLevel")->load());
     auto lowp = apvts.getRawParameterValue("LowPan")->load();
     auto bandp = apvts.getRawParameterValue("BandPan")->load();
     auto highp = apvts.getRawParameterValue("HighPan")->load();
 
-    auto f = 2 * sin(3.1415927 * freq / SVFAudioProcessor::getSampleRate());
+    auto f = 2 * sin(juce::MathConstants<float>::pi * freq / SVFAudioProcessor::getSampleRate());
     
     // In case we have more outputs than inputs, this code clears any output
     // channels that didn't contain input data, (because these aren't
@@ -199,8 +199,8 @@ bool SVFAudioProcessor::hasEditor() const
 
 juce::AudioProcessorEditor* SVFAudioProcessor::createEditor()
 {
-    return new juce::GenericAudioProcessorEditor(*this);
-    // return new SVFAudioProcessorEditor (*this);
+    //return new juce::GenericAudioProcessorEditor(*this);
+    return new SVFAudioProcessorEditor (*this);
 }
 
 //==============================================================================
@@ -234,13 +234,13 @@ juce::AudioProcessorValueTreeState::ParameterLayout SVFAudioProcessor::createPar
 
     juce::AudioProcessorValueTreeState::ParameterLayout layout;
     layout.add(std::make_unique<juce::AudioParameterFloat>("Frequency","Frequency",20.0f,10000.0f,1000.0f));
-    layout.add(std::make_unique<juce::AudioParameterFloat>("Q","Q",0.01f,1.0f,0.5f));
-    layout.add(std::make_unique<juce::AudioParameterFloat>("LowGain","LowGain",0.0f,10.0f,1.0f));
-    layout.add(std::make_unique<juce::AudioParameterFloat>("BandGain","BandGain",0.0f,10.0f,1.0f));
-    layout.add(std::make_unique<juce::AudioParameterFloat>("HighGain","HighGain",0.0f,10.0f,1.0f));
-    layout.add(std::make_unique<juce::AudioParameterFloat>("LowLevel","LowLevel",0.0f,2.0f,1.0f));
-    layout.add(std::make_unique<juce::AudioParameterFloat>("BandLevel","BandLevel",0.0f,2.0f,1.0f));
-    layout.add(std::make_unique<juce::AudioParameterFloat>("HighLevel","HighLevel",0.0f,2.0f,1.0f));
+    layout.add(std::make_unique<juce::AudioParameterFloat>("Q","Q",0.02f,0.99f,0.5f));
+    layout.add(std::make_unique<juce::AudioParameterFloat>("LowGain","LowGain",-90.0f,24.0f,0.0f));
+    layout.add(std::make_unique<juce::AudioParameterFloat>("BandGain","BandGain",-90.0f,24.0f,0.0f));
+    layout.add(std::make_unique<juce::AudioParameterFloat>("HighGain","HighGain",-90.0f,24.0f,0.0f));
+    layout.add(std::make_unique<juce::AudioParameterFloat>("LowLevel","LowLevel",-90.0f,12.0f,0.0f));
+    layout.add(std::make_unique<juce::AudioParameterFloat>("BandLevel","BandLevel",-90.0f,12.0f,0.0f));
+    layout.add(std::make_unique<juce::AudioParameterFloat>("HighLevel","HighLevel",-90.0f,12.0f,0.0f));
     layout.add(std::make_unique<juce::AudioParameterFloat>("LowPan","LowPan",0.0f,1.0f,0.5f));
     layout.add(std::make_unique<juce::AudioParameterFloat>("BandPan","BandPan",0.0f,1.0f,0.5f));
     layout.add(std::make_unique<juce::AudioParameterFloat>("HighPan","HighPan",0.0f,1.0f,0.5f));
