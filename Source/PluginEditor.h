@@ -41,8 +41,12 @@ public:
     // g.drawText(juce::String());
 
     juce::Path dialTick;
-    dialTick.addRectangle(0,-radius,10.0f,radius*0.33);
+    juce::Rectangle<int> rect(0,-radius,10.0f,radius*0.33);
+    // juce::Point point(centreX,centreY);
+    dialTick.addRectangle(rect);
     g.fillPath(dialTick,juce::AffineTransform::rotation(angle).translated(centreX,centreY));
+    // juce::DropShadow shadow(juce::Colours::white,30,point);
+    // shadow.drawForRectangle(g,rect);
   };
 
   juce::Slider::SliderLayout getSliderLayout (juce::Slider& slider) override
@@ -60,7 +64,7 @@ public:
     g.setColour(juce::Colours::white);
     
     auto labelArea{label.getLocalBounds().toFloat()};
-    g.setFont(labelArea.getHeight() * 0.9f);
+    g.setFont(labelArea.getHeight() * 0.8f);
     auto center = labelArea.getCentre();
    
     juce::String labelToDisplay = juce::String(label.getText());
