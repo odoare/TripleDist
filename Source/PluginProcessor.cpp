@@ -101,6 +101,16 @@ void SVFAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
         SVFAudioProcessor::band[n]=0.0f;
         SVFAudioProcessor::high[n]=0.0f;
     }
+
+    rmsLevelInL.reset(sampleRate,0.5);
+    rmsLevelInR.reset(sampleRate,0.5);
+    rmsLevelInL.setCurrentAndTargetValue(-30.0f);
+    rmsLevelInR.setCurrentAndTargetValue(-30.0f);
+
+    // rmsLevelLowL.reset(sampleRate,0.5);
+    // rmsLevelLowR.reset(sampleRate,0.5);
+    // rmsLevelLowL.setCurrentAndTargetValue(-30.0f);
+    // rmsLevelLowR.setCurrentAndTargetValue(-30.0f);
 }
 
 void SVFAudioProcessor::releaseResources()
@@ -164,6 +174,26 @@ void SVFAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Mi
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
 
+    // Vumeter levels
+    rmsLevelInL.skip(buffer.getNumSamples());
+    rmsLevelInR.skip(buffer.getNumSamples());
+    // rmsLevelLowL.skip(buffer.getNumSamples());
+    // rmsLevelLowR.skip(buffer.getNumSamples());
+    {
+        const auto value = juce::Decibels::gainToDecibels(buffer.getRMSLevel(0,0,buffer.getNumSamples()));
+        if (value < rmsLevelInL.getCurrentValue())
+            rmsLevelInL.setTargetValue(value);
+        else
+            rmsLevelInL.setCurrentAndTargetValue(value);
+    }
+    {
+        const auto value = juce::Decibels::gainToDecibels(buffer.getRMSLevel(1,0,buffer.getNumSamples()));
+        if (value < rmsLevelInR.getCurrentValue())
+            rmsLevelInR.setTargetValue(value);
+        else
+            rmsLevelInR.setCurrentAndTargetValue(value);
+    }
+
     // This is the place where you'd normally do the guts of your plugin's
     // audio processing...
     // Make sure to reset the state if your inner loop is processing
@@ -217,6 +247,16 @@ void SVFAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
     {
         apvts.replaceState(tree);
     }
+}
+
+float SVFAudioProcessor::getRmsLevelIn(const int channel)
+{
+    jassert(channel == 0 || channel == 1);
+    if (channel == 0)
+        return rmsLevelInL.getCurrentValue();
+    if (channel == 1)
+        return rmsLevelInR.getCurrentValue();
+    return 0.f;
 }
 
 //==============================================================================

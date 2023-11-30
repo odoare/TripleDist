@@ -56,6 +56,10 @@ public:
     static juce::AudioProcessorValueTreeState::ParameterLayout createParameters();  
     juce::AudioProcessorValueTreeState apvts{*this,nullptr,"Parameters",createParameters()};
 
+    float getRmsLevelIn(const int channel);
+    // float getRmsLevelLow(const int channel);
+    
+
 private:
 
     static const unsigned int nChannels = 2 ;
@@ -63,6 +67,10 @@ private:
     float low[nChannels],
           band[nChannels],
           high[nChannels];
+
+    juce::LinearSmoothedValue<float> rmsLevelInL, rmsLevelInR;
+    // juce::LinearSmoothedValue<float> rmsLevelLowL, rmsLevelLowR;
+    
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SVFAudioProcessor)
