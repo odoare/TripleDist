@@ -65,11 +65,18 @@ public:
                           juce::roundToInt(center.x + g.getCurrentFont().getHorizontalScale()),
                           juce::roundToInt(center.y + g.getCurrentFont().getDescent()),
                           juce::Justification::horizontallyCentred);
+        
     }
 
     void setColour(juce::Colour newCol)
     {
       sliderColour = newCol;
+    }
+
+    void drawTooltip(juce::Graphics&g, const juce::String& text, int width, int height) override
+    {
+        //Just making the window bright magenta for now
+        g.fillAll(juce::Colours::magenta);
     }
 
 private:

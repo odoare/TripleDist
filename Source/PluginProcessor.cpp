@@ -102,10 +102,15 @@ void SVFAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
         SVFAudioProcessor::high[n]=0.0f;
     }
 
-    rmsLevelInL.reset(sampleRate,0.5);
-    rmsLevelInR.reset(sampleRate,0.5);
-    rmsLevelInL.setCurrentAndTargetValue(-30.0f);
-    rmsLevelInR.setCurrentAndTargetValue(-30.0f);
+    for (int channel=0;channel<nChannels;channel++)
+    {
+        rmsLevelIn[channel].reset(sampleRate,0.5);
+        rmsLevelIn[channel].setCurrentAndTargetValue(-30.0f);
+    }
+
+    lowBuffer.setSize(2,samplesPerBlock);
+    bandBuffer.setSize(2,samplesPerBlock);
+    highBuffer.setSize(2,samplesPerBlock);
 
     // rmsLevelLowL.reset(sampleRate,0.5);
     // rmsLevelLowR.reset(sampleRate,0.5);
@@ -153,6 +158,8 @@ void SVFAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Mi
 
     auto freq = apvts.getRawParameterValue("Frequency")->load();
     auto q = apvts.getRawParameterValue("Q")->load();
+    auto ing = juce::Decibels::decibelsToGain(apvts.getRawParameterValue("InGain")->load());
+    auto outl = juce::Decibels::decibelsToGain(apvts.getRawParameterValue("OutLevel")->load());
     auto lowg = juce::Decibels::decibelsToGain(apvts.getRawParameterValue("LowGain")->load());
     auto bandg = juce::Decibels::decibelsToGain(apvts.getRawParameterValue("BandGain")->load());
     auto highg = juce::Decibels::decibelsToGain(apvts.getRawParameterValue("HighGain")->load());
@@ -175,24 +182,24 @@ void SVFAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Mi
         buffer.clear (i, 0, buffer.getNumSamples());
 
     // Vumeter levels
-    rmsLevelInL.skip(buffer.getNumSamples());
-    rmsLevelInR.skip(buffer.getNumSamples());
+    //rmsLevelInL.skip(buffer.getNumSamples());
+    // rmsLevelInR.skip(buffer.getNumSamples());
     // rmsLevelLowL.skip(buffer.getNumSamples());
     // rmsLevelLowR.skip(buffer.getNumSamples());
-    {
-        const auto value = juce::Decibels::gainToDecibels(buffer.getRMSLevel(0,0,buffer.getNumSamples()));
-        if (value < rmsLevelInL.getCurrentValue())
-            rmsLevelInL.setTargetValue(value);
-        else
-            rmsLevelInL.setCurrentAndTargetValue(value);
-    }
-    {
-        const auto value = juce::Decibels::gainToDecibels(buffer.getRMSLevel(1,0,buffer.getNumSamples()));
-        if (value < rmsLevelInR.getCurrentValue())
-            rmsLevelInR.setTargetValue(value);
-        else
-            rmsLevelInR.setCurrentAndTargetValue(value);
-    }
+    // {
+    //     const auto value = juce::Decibels::gainToDecibels(buffer.getRMSLevel(0,0,buffer.getNumSamples()));
+    //     if (value < rmsLevelInL.getCurrentValue())
+    //         rmsLevelInL.setTargetValue(value);
+    //     else
+    //         rmsLevelInL.setCurrentAndTargetValue(value);
+    // }
+    // {
+    //     const auto value = juce::Decibels::gainToDecibels(buffer.getRMSLevel(1,0,buffer.getNumSamples()));
+    //     if (value < rmsLevelInR.getCurrentValue())
+    //         rmsLevelInR.setTargetValue(value);
+    //     else
+    //         rmsLevelInR.setCurrentAndTargetValue(value);
+    // }
 
     // This is the place where you'd normally do the guts of your plugin's
     // audio processing...
@@ -202,21 +209,67 @@ void SVFAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Mi
     // interleaved by keeping the same state.
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
-        
+        rmsLevelIn[channel].skip(buffer.getNumSamples());
+        {
+            const auto value = juce::Decibels::gainToDecibels(buffer.getRMSLevel(channel,0,buffer.getNumSamples()));
+            if (value < rmsLevelIn[channel].getCurrentValue())
+                rmsLevelIn[channel].setTargetValue(value);
+            else
+                rmsLevelIn[channel].setCurrentAndTargetValue(value);
+        }
+
         auto lp = ((1-channel)+(2*channel-1)*lowp)*lowg ;
         auto bp = ((1-channel)+(2*channel-1)*bandp)*bandg ;
         auto hp = ((1-channel)+(2*channel-1)*highp)*highg ;
 
         auto* channelData = buffer.getWritePointer (channel);
+        auto* lowData = lowBuffer.getWritePointer (channel);
+        auto* bandData = bandBuffer.getWritePointer (channel);
+        auto* highData = highBuffer.getWritePointer (channel);
 
         for (int sample=0; sample<buffer.getNumSamples(); ++sample)
         {
             low[channel] = low[channel] + f * band[channel];
-            high[channel] = channelData[sample] - low[channel] - q*band[channel];
+            high[channel] = ing*channelData[sample] - low[channel] - q*band[channel];
             band[channel] = f * high[channel] + band[channel];
-            channelData[sample] =  lowl*tanh(lp*low[channel])
-                                    + bandl*tanh(bp*band[channel])
-                                    + highl*tanh(hp*high[channel]);
+            lowData[sample] = lowl*tanh(lp*low[channel]);
+            bandData[sample] = bandl*tanh(bp*band[channel]);
+            highData[sample] = highl*tanh(hp*high[channel]);
+            channelData[sample] =  outl*(lowData[sample]
+                                    + bandData[sample]
+                                    + highData[sample]);
+        }
+        rmsLevelOut[channel].skip(buffer.getNumSamples());
+        {
+            const auto value = juce::Decibels::gainToDecibels(buffer.getRMSLevel(channel,0,buffer.getNumSamples()));
+            if (value < rmsLevelOut[channel].getCurrentValue())
+                rmsLevelOut[channel].setTargetValue(value);
+            else
+                rmsLevelOut[channel].setCurrentAndTargetValue(value);
+        }
+        rmsLevelLow[channel].skip(lowBuffer.getNumSamples());
+        {
+            const auto value = juce::Decibels::gainToDecibels(lowBuffer.getRMSLevel(channel,0,lowBuffer.getNumSamples()));
+            if (value < rmsLevelLow[channel].getCurrentValue())
+                rmsLevelLow[channel].setTargetValue(value);
+            else
+                rmsLevelLow[channel].setCurrentAndTargetValue(value);
+        }
+        rmsLevelBand[channel].skip(bandBuffer.getNumSamples());
+        {
+            const auto value = juce::Decibels::gainToDecibels(bandBuffer.getRMSLevel(channel,0,bandBuffer.getNumSamples()));
+            if (value < rmsLevelBand[channel].getCurrentValue())
+                rmsLevelBand[channel].setTargetValue(value);
+            else
+                rmsLevelBand[channel].setCurrentAndTargetValue(value);
+        }
+        rmsLevelHigh[channel].skip(highBuffer.getNumSamples());
+        {
+            const auto value = juce::Decibels::gainToDecibels(highBuffer.getRMSLevel(channel,0,highBuffer.getNumSamples()));
+            if (value < rmsLevelHigh[channel].getCurrentValue())
+                rmsLevelHigh[channel].setTargetValue(value);
+            else
+                rmsLevelHigh[channel].setCurrentAndTargetValue(value);
         }
     }
 }
@@ -249,14 +302,14 @@ void SVFAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
     }
 }
 
-float SVFAudioProcessor::getRmsLevelIn(const int channel)
+float SVFAudioProcessor::getRmsLevel(const int bus, const int channel)
 {
-    jassert(channel == 0 || channel == 1);
-    if (channel == 0)
-        return rmsLevelInL.getCurrentValue();
-    if (channel == 1)
-        return rmsLevelInR.getCurrentValue();
-    return 0.f;
+    if (bus==0) return rmsLevelIn[channel].getCurrentValue();
+    else if (bus==1) return rmsLevelOut[channel].getCurrentValue();
+    else if (bus==2) return rmsLevelLow[channel].getCurrentValue();
+    else if (bus==3) return rmsLevelBand[channel].getCurrentValue();
+    else if (bus==4) return rmsLevelHigh[channel].getCurrentValue();
+    else return 0.f;
 }
 
 //==============================================================================
@@ -277,12 +330,18 @@ juce::AudioProcessorValueTreeState::ParameterLayout SVFAudioProcessor::createPar
     juce::AudioProcessorValueTreeState::ParameterLayout layout;
     layout.add(std::make_unique<juce::AudioParameterFloat>("Frequency","Frequency",20.0f,10000.0f,1000.0f));
     layout.add(std::make_unique<juce::AudioParameterFloat>("Q","Q",0.02f,0.99f,0.5f));
+
+    layout.add(std::make_unique<juce::AudioParameterFloat>("InGain","InGain",-90.0f,24.0f,0.0f));
+    layout.add(std::make_unique<juce::AudioParameterFloat>("OutLevel","OutLevel",-90.0f,24.0f,0.0f));
+
     layout.add(std::make_unique<juce::AudioParameterFloat>("LowGain","LowGain",-90.0f,24.0f,0.0f));
     layout.add(std::make_unique<juce::AudioParameterFloat>("BandGain","BandGain",-90.0f,24.0f,0.0f));
     layout.add(std::make_unique<juce::AudioParameterFloat>("HighGain","HighGain",-90.0f,24.0f,0.0f));
-    layout.add(std::make_unique<juce::AudioParameterFloat>("LowLevel","LowLevel",-90.0f,12.0f,0.0f));
-    layout.add(std::make_unique<juce::AudioParameterFloat>("BandLevel","BandLevel",-90.0f,12.0f,0.0f));
-    layout.add(std::make_unique<juce::AudioParameterFloat>("HighLevel","HighLevel",-90.0f,12.0f,0.0f));
+
+    layout.add(std::make_unique<juce::AudioParameterFloat>("LowLevel","LowLevel",-90.0f,24.0f,0.0f));
+    layout.add(std::make_unique<juce::AudioParameterFloat>("BandLevel","BandLevel",-90.0f,24.0f,0.0f));
+    layout.add(std::make_unique<juce::AudioParameterFloat>("HighLevel","HighLevel",-90.0f,24.0f,0.0f));
+
     layout.add(std::make_unique<juce::AudioParameterFloat>("LowPan","LowPan",0.0f,1.0f,0.5f));
     layout.add(std::make_unique<juce::AudioParameterFloat>("BandPan","BandPan",0.0f,1.0f,0.5f));
     layout.add(std::make_unique<juce::AudioParameterFloat>("HighPan","HighPan",0.0f,1.0f,0.5f));

@@ -56,7 +56,7 @@ public:
     static juce::AudioProcessorValueTreeState::ParameterLayout createParameters();  
     juce::AudioProcessorValueTreeState apvts{*this,nullptr,"Parameters",createParameters()};
 
-    float getRmsLevelIn(const int channel);
+    float getRmsLevel(const int bus, const int channel);
     // float getRmsLevelLow(const int channel);
     
 
@@ -68,8 +68,14 @@ private:
           band[nChannels],
           high[nChannels];
 
-    juce::LinearSmoothedValue<float> rmsLevelInL, rmsLevelInR;
+    juce::LinearSmoothedValue<float> rmsLevelIn[nChannels],
+                                      rmsLevelOut[nChannels], 
+                                      rmsLevelLow[nChannels],
+                                      rmsLevelBand[nChannels],
+                                      rmsLevelHigh[nChannels];
     // juce::LinearSmoothedValue<float> rmsLevelLowL, rmsLevelLowR;
+
+    juce::AudioBuffer<float> lowBuffer,bandBuffer,highBuffer ;
     
 
     //==============================================================================

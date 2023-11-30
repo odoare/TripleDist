@@ -12,8 +12,6 @@
 //==============================================================================
 SVFAudioProcessorEditor::SVFAudioProcessorEditor (SVFAudioProcessor& p)
     : AudioProcessorEditor (&p), audioProcessor (p)
-    // ,verticalGradientMeterL([&]() { return audioProcessor.getRmsLevel(0); })
-    // ,verticalGradientMeterR([&]() { return audioProcessor.getRmsLevel(1); })
 {
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
@@ -22,7 +20,7 @@ SVFAudioProcessorEditor::SVFAudioProcessorEditor (SVFAudioProcessor& p)
 
     freqSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
     freqSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition::TextBoxBelow,false,0,0);
-    freqSlider.setTitle("Freq");
+    freqSlider.setPopupDisplayEnabled(true,true,nullptr,1000);
     addAndMakeVisible(freqSlider);
     freqSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.apvts,"Frequency",freqSlider);
     freqSlider.setLookAndFeel(&myLookAndFeelTeal);
@@ -32,6 +30,18 @@ SVFAudioProcessorEditor::SVFAudioProcessorEditor (SVFAudioProcessor& p)
     addAndMakeVisible(qSlider);
     qSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.apvts,"Q",qSlider);
     qSlider.setLookAndFeel(&myLookAndFeelTeal);
+
+    inGainSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
+    inGainSlider.setTextBoxStyle(juce::Slider::TextBoxBelow,false,100,20);
+    addAndMakeVisible(inGainSlider);
+    inGainSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.apvts,"InGain",inGainSlider);
+    inGainSlider.setLookAndFeel(&myLookAndFeelTeal);
+
+    outLevelSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
+    outLevelSlider.setTextBoxStyle(juce::Slider::TextBoxBelow,false,100,20);
+    addAndMakeVisible(outLevelSlider);
+    outLevelSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.apvts,"OutLevel",outLevelSlider);
+    outLevelSlider.setLookAndFeel(&myLookAndFeelTeal);
 
     lowGainSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
     lowGainSlider.setTextBoxStyle(juce::Slider::TextBoxBelow,false,100,20);
@@ -87,11 +97,30 @@ SVFAudioProcessorEditor::SVFAudioProcessorEditor (SVFAudioProcessor& p)
     highPanSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.apvts,"HighPan",highPanSlider);
     highPanSlider.setLookAndFeel(&myLookAndFeelRed);
 
-    verticalGradientMeterInL.setColour(juce::Colours::teal);
+    verticalGradientMeterInL.setColour(juce::Colours::teal.brighter());
     addAndMakeVisible(verticalGradientMeterInL);
-    verticalGradientMeterInR.setColour(juce::Colours::teal);
+    verticalGradientMeterInR.setColour(juce::Colours::teal.brighter());
     addAndMakeVisible(verticalGradientMeterInR);
 
+    verticalGradientMeterOutL.setColour(juce::Colours::teal.brighter());
+    addAndMakeVisible(verticalGradientMeterOutL);
+    verticalGradientMeterOutR.setColour(juce::Colours::teal.brighter());
+    addAndMakeVisible(verticalGradientMeterOutR);
+
+    verticalGradientMeterLowL.setColour(juce::Colours::blue.brighter());
+    addAndMakeVisible(verticalGradientMeterLowL);
+    verticalGradientMeterLowR.setColour(juce::Colours::blue.brighter());
+    addAndMakeVisible(verticalGradientMeterLowR);
+    
+    verticalGradientMeterBandL.setColour(juce::Colours::green.brighter());
+    addAndMakeVisible(verticalGradientMeterBandL);
+    verticalGradientMeterBandR.setColour(juce::Colours::green.brighter());
+    addAndMakeVisible(verticalGradientMeterBandR);
+
+    verticalGradientMeterHighL.setColour(juce::Colours::red.brighter());
+    addAndMakeVisible(verticalGradientMeterHighL);
+    verticalGradientMeterHighR.setColour(juce::Colours::red.brighter());
+    addAndMakeVisible(verticalGradientMeterHighR);
     setSize (600, 400);
 }
 
@@ -119,8 +148,12 @@ void SVFAudioProcessorEditor::resized()
     auto unitX = (1-2*border)*getWidth()/6;
     auto unitY = (1-2*border)*getHeight()/4;
     
-    qSlider.setBounds(unitXBorder,unitYBorder+unitY,unitX,unitY);
-    freqSlider.setBounds(unitXBorder+2*unitX,unitYBorder,2*unitX,2*unitY);
+    qSlider.setBounds(unitXBorder+3.65*unitX,unitYBorder,unitX,unitY);
+    freqSlider.setBounds(unitXBorder+1.75*unitX,unitYBorder,2*unitX,2*unitY);
+
+    inGainSlider.setBounds(unitXBorder,unitYBorder+unitY,unitX,unitY);
+    outLevelSlider.setBounds(unitXBorder+5*unitX,unitYBorder+unitY,unitX,unitY);
+
     lowGainSlider.setBounds(unitXBorder,unitYBorder+2*unitY,unitX,unitY);
     bandGainSlider.setBounds(unitXBorder+2*unitX,unitYBorder+2*unitY,unitX,unitY);
     highGainSlider.setBounds(unitXBorder+4*unitX,unitYBorder+2*unitY,unitX,unitY);
@@ -133,4 +166,14 @@ void SVFAudioProcessorEditor::resized()
 
     verticalGradientMeterInL.setBounds(unitXBorder,unitYBorder,unitX/2,unitY);
     verticalGradientMeterInR.setBounds(unitXBorder+unitX/2,unitYBorder,unitX/2,unitY);
+
+    verticalGradientMeterOutL.setBounds(unitXBorder+5*unitX,unitYBorder,unitX/2,unitY);
+    verticalGradientMeterOutR.setBounds(unitXBorder+5*unitX+unitX/2,unitYBorder,unitX/2,unitY);
+
+    verticalGradientMeterLowL.setBounds(unitXBorder+unitX,unitYBorder+3*unitY,unitX/2,unitY);
+    verticalGradientMeterLowR.setBounds(unitXBorder+unitX+unitX/2,unitYBorder+3*unitY,unitX/2,unitY);
+    verticalGradientMeterBandL.setBounds(unitXBorder+3*unitX,unitYBorder+3*unitY,unitX/2,unitY);
+    verticalGradientMeterBandR.setBounds(unitXBorder+3*unitX+unitX/2,unitYBorder+3*unitY,unitX/2,unitY);
+    verticalGradientMeterHighL.setBounds(unitXBorder+5*unitX,unitYBorder+3*unitY,unitX/2,unitY);
+    verticalGradientMeterHighR.setBounds(unitXBorder+5*unitX+unitX/2,unitYBorder+3*unitY,unitX/2,unitY);
 }
