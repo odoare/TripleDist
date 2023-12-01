@@ -30,7 +30,7 @@ namespace Gui
 
         auto bounds = getLocalBounds().reduced(10).toFloat();
         auto h = bounds.getHeight();
-        const auto newHeight = juce::jmap(level,-30.0f, 6.0f, 0.0f, h);
+        const auto newHeight = juce::jmap(level,-50.0f, 6.0f, 0.0f, h);
         auto dh = -h+newHeight;
         auto y = bounds.getTopLeft().getY();
         auto bounds2 = bounds;
@@ -41,7 +41,7 @@ namespace Gui
 
         g.setGradientFill(gradient);
         g.setColour(meterColour);
-        const auto scaledY = juce::jmap(level,-30.0f, 6.0f, 0.0f, static_cast<float>(bounds.getHeight()));
+        const auto scaledY = juce::jmap(level,-50.0f, 6.0f, 0.0f, static_cast<float>(bounds.getHeight()));
         // std::cout << scaledY << "\n";
         g.fillRoundedRectangle(bounds2,5.0f);
     }

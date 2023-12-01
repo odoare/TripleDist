@@ -3,9 +3,10 @@
 class MyLookAndFeel : public juce::LookAndFeel_V4
 {
 public:
-  MyLookAndFeel(juce::Colour col)
+  MyLookAndFeel(juce::Colour col,juce::String text)
   {
     setColour(col);
+    setText(text);
   }
 
   void drawRotarySlider(juce::Graphics &g, 
@@ -60,7 +61,9 @@ public:
     g.setFont(labelArea.getHeight() * 0.8f);
     auto center = labelArea.getCentre();
    
-    juce::String labelToDisplay = juce::String(label.getText());
+    //juce::String labelToDisplay = juce::String(label.getText());
+    juce::String labelToDisplay = sliderText;
+    
     g.drawSingleLineText(labelToDisplay,
                           juce::roundToInt(center.x + g.getCurrentFont().getHorizontalScale()),
                           juce::roundToInt(center.y + g.getCurrentFont().getDescent()),
@@ -73,12 +76,12 @@ public:
       sliderColour = newCol;
     }
 
-    void drawTooltip(juce::Graphics&g, const juce::String& text, int width, int height) override
+    void setText(juce::String newText)
     {
-        //Just making the window bright magenta for now
-        g.fillAll(juce::Colours::magenta);
+      sliderText = newText;
     }
 
 private:
   juce::Colour sliderColour;
+  juce::String sliderText;
 };

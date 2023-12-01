@@ -13,89 +13,96 @@
 SVFAudioProcessorEditor::SVFAudioProcessorEditor (SVFAudioProcessor& p)
     : AudioProcessorEditor (&p), audioProcessor (p)
 {
-    // Make sure that before the constructor has finished, you've set the
-    // editor's size to whatever you need it to be.
-    // myLookAndFeelMagenta.setColour(juce::Colours::magenta);
-    // myLookAndFeelTeal.setColour(juce::Colours::teal);
-
     freqSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
     freqSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition::TextBoxBelow,false,0,0);
     freqSlider.setPopupDisplayEnabled(true,true,nullptr,1000);
     addAndMakeVisible(freqSlider);
     freqSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.apvts,"Frequency",freqSlider);
-    freqSlider.setLookAndFeel(&myLookAndFeelTeal);
+    freqSlider.setLookAndFeel(&myLookAndFeelFreq);
 
     qSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
     qSlider.setTextBoxStyle(juce::Slider::TextBoxBelow,false,100,20);
+    qSlider.setPopupDisplayEnabled(true,true,nullptr,1000);
     addAndMakeVisible(qSlider);
     qSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.apvts,"Q",qSlider);
-    qSlider.setLookAndFeel(&myLookAndFeelTeal);
+    qSlider.setLookAndFeel(&myLookAndFeelQ);
 
     inGainSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
     inGainSlider.setTextBoxStyle(juce::Slider::TextBoxBelow,false,100,20);
+    inGainSlider.setPopupDisplayEnabled(true,true,nullptr,1000);
     addAndMakeVisible(inGainSlider);
     inGainSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.apvts,"InGain",inGainSlider);
-    inGainSlider.setLookAndFeel(&myLookAndFeelTeal);
+    inGainSlider.setLookAndFeel(&myLookAndFeelInGain);
 
     outLevelSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
     outLevelSlider.setTextBoxStyle(juce::Slider::TextBoxBelow,false,100,20);
+    outLevelSlider.setPopupDisplayEnabled(true,true,nullptr,1000);
     addAndMakeVisible(outLevelSlider);
     outLevelSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.apvts,"OutLevel",outLevelSlider);
-    outLevelSlider.setLookAndFeel(&myLookAndFeelTeal);
+    outLevelSlider.setLookAndFeel(&myLookAndFeelOutLevel);
 
     lowGainSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
     lowGainSlider.setTextBoxStyle(juce::Slider::TextBoxBelow,false,100,20);
+    lowGainSlider.setPopupDisplayEnabled(true,true,nullptr,1000);
     addAndMakeVisible(lowGainSlider);
     lowGainSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.apvts,"LowGain",lowGainSlider);
-    lowGainSlider.setLookAndFeel(&myLookAndFeelBlue);
+    lowGainSlider.setLookAndFeel(&myLookAndFeelLowGain);
 
     bandGainSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
     bandGainSlider.setTextBoxStyle(juce::Slider::TextBoxBelow,false,100,20);
+    bandGainSlider.setPopupDisplayEnabled(true,true,nullptr,1000);
     addAndMakeVisible(bandGainSlider);
     bandGainSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.apvts,"BandGain",bandGainSlider);
-    bandGainSlider.setLookAndFeel(&myLookAndFeelGreen);
+    bandGainSlider.setLookAndFeel(&myLookAndFeelBandGain);
 
     highGainSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
     highGainSlider.setTextBoxStyle(juce::Slider::TextBoxBelow,false,100,20);
+    highGainSlider.setPopupDisplayEnabled(true,true,nullptr,1000);
     addAndMakeVisible(highGainSlider);
     highGainSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.apvts,"HighGain",highGainSlider);
-    highGainSlider.setLookAndFeel(&myLookAndFeelRed);
+    highGainSlider.setLookAndFeel(&myLookAndFeelHighGain);
 
     lowLevelSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
     lowLevelSlider.setTextBoxStyle(juce::Slider::TextBoxBelow,false,100,20);
+    lowLevelSlider.setPopupDisplayEnabled(true,true,nullptr,1000);
     addAndMakeVisible(lowLevelSlider);
     lowLevelSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.apvts,"LowLevel",lowLevelSlider);
-    lowLevelSlider.setLookAndFeel(&myLookAndFeelBlue);
+    lowLevelSlider.setLookAndFeel(&myLookAndFeelLowLevel);
     
     bandLevelSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
     bandLevelSlider.setTextBoxStyle(juce::Slider::TextBoxBelow,false,100,20);
+    bandLevelSlider.setPopupDisplayEnabled(true,true,nullptr,1000);
     addAndMakeVisible(bandLevelSlider);
     bandLevelSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.apvts,"BandLevel",bandLevelSlider);
-    bandLevelSlider.setLookAndFeel(&myLookAndFeelGreen);
+    bandLevelSlider.setLookAndFeel(&myLookAndFeelBandLevel);
 
     highLevelSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
     highLevelSlider.setTextBoxStyle(juce::Slider::TextBoxBelow,false,100,20);
+    highLevelSlider.setPopupDisplayEnabled(true,true,nullptr,1000);
     addAndMakeVisible(highLevelSlider);
     highLevelSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.apvts,"HighLevel",highLevelSlider);
-    highLevelSlider.setLookAndFeel(&myLookAndFeelRed);
+    highLevelSlider.setLookAndFeel(&myLookAndFeelHighLevel);
 
     lowPanSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
     lowPanSlider.setTextBoxStyle(juce::Slider::TextBoxBelow,false,100,20);
+    lowPanSlider.setPopupDisplayEnabled(true,true,nullptr,1000);
     addAndMakeVisible(lowPanSlider);
     lowPanSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.apvts,"LowPan",lowPanSlider);
-    lowPanSlider.setLookAndFeel(&myLookAndFeelBlue);
+    lowPanSlider.setLookAndFeel(&myLookAndFeelLowPan);
 
     bandPanSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
     bandPanSlider.setTextBoxStyle(juce::Slider::TextBoxBelow,false,100,20);
+    bandPanSlider.setPopupDisplayEnabled(true,true,nullptr,1000);
     addAndMakeVisible(bandPanSlider);
     bandPanSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.apvts,"BandPan",bandPanSlider);
-    bandPanSlider.setLookAndFeel(&myLookAndFeelGreen);
+    bandPanSlider.setLookAndFeel(&myLookAndFeelBandPan);
 
     highPanSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
     highPanSlider.setTextBoxStyle(juce::Slider::TextBoxBelow,false,100,20);
+    highPanSlider.setPopupDisplayEnabled(true,true,nullptr,1000);
     addAndMakeVisible(highPanSlider);
     highPanSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.apvts,"HighPan",highPanSlider);
-    highPanSlider.setLookAndFeel(&myLookAndFeelRed);
+    highPanSlider.setLookAndFeel(&myLookAndFeelHighPan);
 
     verticalGradientMeterInL.setColour(juce::Colours::teal.brighter());
     addAndMakeVisible(verticalGradientMeterInL);
@@ -148,8 +155,8 @@ void SVFAudioProcessorEditor::resized()
     auto unitX = (1-2*border)*getWidth()/6;
     auto unitY = (1-2*border)*getHeight()/4;
     
-    qSlider.setBounds(unitXBorder+3.65*unitX,unitYBorder,unitX,unitY);
-    freqSlider.setBounds(unitXBorder+1.75*unitX,unitYBorder,2*unitX,2*unitY);
+    qSlider.setBounds(unitXBorder+1.55*unitX,unitYBorder,unitX,unitY);
+    freqSlider.setBounds(unitXBorder+2.55*unitX,unitYBorder,2*unitX,2*unitY);
 
     inGainSlider.setBounds(unitXBorder,unitYBorder+unitY,unitX,unitY);
     outLevelSlider.setBounds(unitXBorder+5*unitX,unitYBorder+unitY,unitX,unitY);

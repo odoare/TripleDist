@@ -63,11 +63,19 @@ private:
     // access the processor object that created it.
     SVFAudioProcessor& audioProcessor;
 
-    MyLookAndFeel myLookAndFeelTeal{juce::Colours::teal.brighter()},
-                  myLookAndFeelMagenta{juce::Colours::magenta},
-                  myLookAndFeelBlue{juce::Colours::blue.brighter()},
-                  myLookAndFeelGreen{juce::Colours::green.brighter()},
-                  myLookAndFeelRed{juce::Colours::red.brighter()};
+    MyLookAndFeel myLookAndFeelInGain{juce::Colours::teal.brighter(),"In Gain"},
+                  myLookAndFeelOutLevel{juce::Colours::teal.brighter(),"Level"},
+                  myLookAndFeelLowGain{juce::Colours::blue.brighter(),"Drive"},
+                  myLookAndFeelLowLevel{juce::Colours::blue.brighter(),"Level"},
+                  myLookAndFeelLowPan{juce::Colours::blue.brighter(),"Pan"},
+                  myLookAndFeelBandGain{juce::Colours::green.brighter(),"Drive"},
+                  myLookAndFeelBandLevel{juce::Colours::green.brighter(),"Level"},
+                  myLookAndFeelBandPan{juce::Colours::green.brighter(),"Pan"},
+                  myLookAndFeelHighGain{juce::Colours::red.brighter(),"Drive"},
+                  myLookAndFeelHighLevel{juce::Colours::red.brighter(),"Level"},
+                  myLookAndFeelHighPan{juce::Colours::red.brighter(),"Pan"},
+                  myLookAndFeelFreq{juce::Colours::magenta.brighter(),"Freq"},
+                  myLookAndFeelQ{juce::Colours::magenta.brighter(),"Q"};
 
     Gui::VerticalGradientMeter verticalGradientMeterInL{[&]() { return audioProcessor.getRmsLevel(0,0); }},
                                 verticalGradientMeterInR{[&]() { return audioProcessor.getRmsLevel(0,1); }},
