@@ -181,32 +181,6 @@ void SVFAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Mi
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
 
-    // Vumeter levels
-    //rmsLevelInL.skip(buffer.getNumSamples());
-    // rmsLevelInR.skip(buffer.getNumSamples());
-    // rmsLevelLowL.skip(buffer.getNumSamples());
-    // rmsLevelLowR.skip(buffer.getNumSamples());
-    // {
-    //     const auto value = juce::Decibels::gainToDecibels(buffer.getRMSLevel(0,0,buffer.getNumSamples()));
-    //     if (value < rmsLevelInL.getCurrentValue())
-    //         rmsLevelInL.setTargetValue(value);
-    //     else
-    //         rmsLevelInL.setCurrentAndTargetValue(value);
-    // }
-    // {
-    //     const auto value = juce::Decibels::gainToDecibels(buffer.getRMSLevel(1,0,buffer.getNumSamples()));
-    //     if (value < rmsLevelInR.getCurrentValue())
-    //         rmsLevelInR.setTargetValue(value);
-    //     else
-    //         rmsLevelInR.setCurrentAndTargetValue(value);
-    // }
-
-    // This is the place where you'd normally do the guts of your plugin's
-    // audio processing...
-    // Make sure to reset the state if your inner loop is processing
-    // the samples and the outer loop is handling the channels.
-    // Alternatively, you can process the samples with the channels
-    // interleaved by keeping the same state.
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
         rmsLevelIn[channel].skip(buffer.getNumSamples());

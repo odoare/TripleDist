@@ -104,31 +104,32 @@ SVFAudioProcessorEditor::SVFAudioProcessorEditor (SVFAudioProcessor& p)
     highPanSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.apvts,"HighPan",highPanSlider);
     highPanSlider.setLookAndFeel(&myLookAndFeelHighPan);
 
-    verticalGradientMeterInL.setColour(juce::Colours::teal.brighter());
-    addAndMakeVisible(verticalGradientMeterInL);
-    verticalGradientMeterInR.setColour(juce::Colours::teal.brighter());
-    addAndMakeVisible(verticalGradientMeterInR);
+    verticalMeterInL.setColour(juce::Colours::teal.brighter());
+    addAndMakeVisible(verticalMeterInL);
+    verticalMeterInR.setColour(juce::Colours::teal.brighter());
+    addAndMakeVisible(verticalMeterInR);
 
-    verticalGradientMeterOutL.setColour(juce::Colours::teal.brighter());
-    addAndMakeVisible(verticalGradientMeterOutL);
-    verticalGradientMeterOutR.setColour(juce::Colours::teal.brighter());
-    addAndMakeVisible(verticalGradientMeterOutR);
+    verticalMeterOutL.setColour(juce::Colours::teal.brighter());
+    addAndMakeVisible(verticalMeterOutL);
+    verticalMeterOutR.setColour(juce::Colours::teal.brighter());
+    addAndMakeVisible(verticalMeterOutR);
 
-    verticalGradientMeterLowL.setColour(juce::Colours::blue.brighter());
-    addAndMakeVisible(verticalGradientMeterLowL);
-    verticalGradientMeterLowR.setColour(juce::Colours::blue.brighter());
-    addAndMakeVisible(verticalGradientMeterLowR);
+    verticalMeterLowL.setColour(juce::Colours::blue.brighter());
+    addAndMakeVisible(verticalMeterLowL);
+    verticalMeterLowR.setColour(juce::Colours::blue.brighter());
+    addAndMakeVisible(verticalMeterLowR);
     
-    verticalGradientMeterBandL.setColour(juce::Colours::green.brighter());
-    addAndMakeVisible(verticalGradientMeterBandL);
-    verticalGradientMeterBandR.setColour(juce::Colours::green.brighter());
-    addAndMakeVisible(verticalGradientMeterBandR);
+    verticalMeterBandL.setColour(juce::Colours::green.brighter());
+    addAndMakeVisible(verticalMeterBandL);
+    verticalMeterBandR.setColour(juce::Colours::green.brighter());
+    addAndMakeVisible(verticalMeterBandR);
 
-    verticalGradientMeterHighL.setColour(juce::Colours::red.brighter());
-    addAndMakeVisible(verticalGradientMeterHighL);
-    verticalGradientMeterHighR.setColour(juce::Colours::red.brighter());
-    addAndMakeVisible(verticalGradientMeterHighR);
+    verticalMeterHighL.setColour(juce::Colours::red.brighter());
+    addAndMakeVisible(verticalMeterHighL);
+    verticalMeterHighR.setColour(juce::Colours::red.brighter());
+    addAndMakeVisible(verticalMeterHighR);
     setSize (600, 400);
+    setResizable(true,true);
 }
 
 SVFAudioProcessorEditor::~SVFAudioProcessorEditor()
@@ -138,10 +139,36 @@ SVFAudioProcessorEditor::~SVFAudioProcessorEditor()
 //==============================================================================
 void SVFAudioProcessorEditor::paint (juce::Graphics& g)
 {
+    
+    float border = 0.05 ;
+    float unitXBorder = border*getWidth();
+    float unitYBorder = border*getHeight();
+    auto unitX = (1-2*border)*getWidth()/6;
+    auto unitY = (1-2*border)*getHeight()/4;
+    
     // (Our component is opaque, so we must completely fill the background with a solid colour)
     // g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
     g.fillAll (juce::Colour::fromFloatRGBA (0.1f, 0.1f, 0.15f, 1.0f));
+    // g.fillAll (juce::Colours::black);
+    g.setColour(juce::Colours::grey.brighter());
+    g.setFont(44);
+    g.drawSingleLineText("Triple Dist",
+                          unitXBorder+3.9*unitX,
+                          unitYBorder+unitY/2,
+                          juce::Justification::horizontallyCentred);
+    g.setFont(16);
+    g.drawSingleLineText("odiomechanics.com",
+                          unitXBorder+3.9*unitX,
+                          unitYBorder+1.5*unitY/2,
+                          juce::Justification::horizontallyCentred);
 
+    int fontSize = 18;
+    g.setFont (fontSize);
+    g.drawMultiLineText ("IN", unitXBorder+unitX/2-fontSize/3 , 4*unitYBorder, fontSize/2, juce::Justification::centred);
+    g.drawMultiLineText ("OUT", unitXBorder+5*unitX+unitX/2-fontSize/3 , 3*unitYBorder, fontSize/2, juce::Justification::centred);
+    g.drawMultiLineText ("LOW", unitXBorder+unitX+unitX/2-fontSize/3 , 3*unitYBorder+3*unitY, fontSize/2, juce::Justification::centred);
+    g.drawMultiLineText ("MID", unitXBorder+3*unitX+unitX/2-fontSize/3 , 3*unitYBorder+3*unitY, fontSize/2, juce::Justification::centred);
+    g.drawMultiLineText ("HIGH", unitXBorder+5*unitX+unitX/2-fontSize/3 , 2*unitYBorder+3*unitY, fontSize/2, juce::Justification::centred);
 }
 
 void SVFAudioProcessorEditor::resized()
@@ -155,8 +182,8 @@ void SVFAudioProcessorEditor::resized()
     auto unitX = (1-2*border)*getWidth()/6;
     auto unitY = (1-2*border)*getHeight()/4;
     
-    qSlider.setBounds(unitXBorder+1.55*unitX,unitYBorder,unitX,unitY);
-    freqSlider.setBounds(unitXBorder+2.55*unitX,unitYBorder,2*unitX,2*unitY);
+    qSlider.setBounds(unitXBorder+2.5*unitX,unitYBorder+unitY,unitX,unitY);
+    freqSlider.setBounds(unitXBorder+unitX,unitYBorder,2*unitX,2*unitY);
 
     inGainSlider.setBounds(unitXBorder,unitYBorder+unitY,unitX,unitY);
     outLevelSlider.setBounds(unitXBorder+5*unitX,unitYBorder+unitY,unitX,unitY);
@@ -171,16 +198,16 @@ void SVFAudioProcessorEditor::resized()
     bandPanSlider.setBounds(unitXBorder+2*unitX,unitYBorder+3*unitY,unitX,unitY);
     highPanSlider.setBounds(unitXBorder+4*unitX,unitYBorder+3*unitY,unitX,unitY);
 
-    verticalGradientMeterInL.setBounds(unitXBorder,unitYBorder,unitX/2,unitY);
-    verticalGradientMeterInR.setBounds(unitXBorder+unitX/2,unitYBorder,unitX/2,unitY);
+    verticalMeterInL.setBounds(unitXBorder+0.5*unitX/3,unitYBorder,unitX/3,unitY);
+    verticalMeterInR.setBounds(unitXBorder+unitX/2,unitYBorder,unitX/3,unitY);
 
-    verticalGradientMeterOutL.setBounds(unitXBorder+5*unitX,unitYBorder,unitX/2,unitY);
-    verticalGradientMeterOutR.setBounds(unitXBorder+5*unitX+unitX/2,unitYBorder,unitX/2,unitY);
+    verticalMeterOutL.setBounds(unitXBorder+5*unitX+0.5*unitX/3,unitYBorder,unitX/3,unitY);
+    verticalMeterOutR.setBounds(unitXBorder+5*unitX+unitX/2,unitYBorder,unitX/3,unitY);
 
-    verticalGradientMeterLowL.setBounds(unitXBorder+unitX,unitYBorder+3*unitY,unitX/2,unitY);
-    verticalGradientMeterLowR.setBounds(unitXBorder+unitX+unitX/2,unitYBorder+3*unitY,unitX/2,unitY);
-    verticalGradientMeterBandL.setBounds(unitXBorder+3*unitX,unitYBorder+3*unitY,unitX/2,unitY);
-    verticalGradientMeterBandR.setBounds(unitXBorder+3*unitX+unitX/2,unitYBorder+3*unitY,unitX/2,unitY);
-    verticalGradientMeterHighL.setBounds(unitXBorder+5*unitX,unitYBorder+3*unitY,unitX/2,unitY);
-    verticalGradientMeterHighR.setBounds(unitXBorder+5*unitX+unitX/2,unitYBorder+3*unitY,unitX/2,unitY);
+    verticalMeterLowL.setBounds(unitXBorder+unitX+0.5*unitX/3,unitYBorder+3*unitY,unitX/3,unitY);
+    verticalMeterLowR.setBounds(unitXBorder+unitX+unitX/2,unitYBorder+3*unitY,unitX/3,unitY);
+    verticalMeterBandL.setBounds(unitXBorder+3*unitX+0.5*unitX/3,unitYBorder+3*unitY,unitX/3,unitY);
+    verticalMeterBandR.setBounds(unitXBorder+3*unitX+unitX/2,unitYBorder+3*unitY,unitX/3,unitY);
+    verticalMeterHighL.setBounds(unitXBorder+5*unitX+0.5*unitX/3,unitYBorder+3*unitY,unitX/3,unitY);
+    verticalMeterHighR.setBounds(unitXBorder+5*unitX+unitX/2,unitYBorder+3*unitY,unitX/3,unitY);
 }

@@ -10,7 +10,7 @@
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
 #include <iostream>
-#include "Components/VerticalGradientMeter.h"
+#include "Components/VerticalMeter.h"
 #include "Components/MyLookAndFeel.h"
 
 //==============================================================================
@@ -63,7 +63,7 @@ private:
     // access the processor object that created it.
     SVFAudioProcessor& audioProcessor;
 
-    MyLookAndFeel myLookAndFeelInGain{juce::Colours::teal.brighter(),"In Gain"},
+    MyLookAndFeel myLookAndFeelInGain{juce::Colours::teal.brighter(),"Gain"},
                   myLookAndFeelOutLevel{juce::Colours::teal.brighter(),"Level"},
                   myLookAndFeelLowGain{juce::Colours::blue.brighter(),"Drive"},
                   myLookAndFeelLowLevel{juce::Colours::blue.brighter(),"Level"},
@@ -77,16 +77,16 @@ private:
                   myLookAndFeelFreq{juce::Colours::magenta.brighter(),"Freq"},
                   myLookAndFeelQ{juce::Colours::magenta.brighter(),"Q"};
 
-    Gui::VerticalGradientMeter verticalGradientMeterInL{[&]() { return audioProcessor.getRmsLevel(0,0); }},
-                                verticalGradientMeterInR{[&]() { return audioProcessor.getRmsLevel(0,1); }},
-                                verticalGradientMeterOutL{[&]() { return audioProcessor.getRmsLevel(1,0); }},
-                                verticalGradientMeterOutR{[&]() { return audioProcessor.getRmsLevel(1,1); }},
-                                verticalGradientMeterLowL{[&]() { return audioProcessor.getRmsLevel(2,0); }},
-                                verticalGradientMeterLowR{[&]() { return audioProcessor.getRmsLevel(2,1); }},
-                                verticalGradientMeterBandL{[&]() { return audioProcessor.getRmsLevel(3,0); }},
-                                verticalGradientMeterBandR{[&]() { return audioProcessor.getRmsLevel(3,1); }},
-                                verticalGradientMeterHighL{[&]() { return audioProcessor.getRmsLevel(4,0); }},
-                                verticalGradientMeterHighR{[&]() { return audioProcessor.getRmsLevel(4,1); }};
+    Gui::VerticalMeter verticalMeterInL{[&]() { return audioProcessor.getRmsLevel(0,0); }},
+                                verticalMeterInR{[&]() { return audioProcessor.getRmsLevel(0,1); }},
+                                verticalMeterOutL{[&]() { return audioProcessor.getRmsLevel(1,0); }},
+                                verticalMeterOutR{[&]() { return audioProcessor.getRmsLevel(1,1); }},
+                                verticalMeterLowL{[&]() { return audioProcessor.getRmsLevel(2,0); }},
+                                verticalMeterLowR{[&]() { return audioProcessor.getRmsLevel(2,1); }},
+                                verticalMeterBandL{[&]() { return audioProcessor.getRmsLevel(3,0); }},
+                                verticalMeterBandR{[&]() { return audioProcessor.getRmsLevel(3,1); }},
+                                verticalMeterHighL{[&]() { return audioProcessor.getRmsLevel(4,0); }},
+                                verticalMeterHighR{[&]() { return audioProcessor.getRmsLevel(4,1); }};
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SVFAudioProcessorEditor)
 };

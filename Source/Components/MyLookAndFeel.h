@@ -28,10 +28,12 @@ public:
 
     juce::Rectangle<float> dialArea(rx,ry,diameter,diameter);
     g.setColour(juce::Colours::black);
+    // g.setColour(juce::Colour::fromFloatRGBA (0.15f, 0.15f, 0.2f, 1.0f));
     //g.drawRect(dialArea);
     g.fillEllipse(dialArea);
     g.setColour(sliderColour);
     g.drawEllipse(dialArea,2.0f);
+    
     // g.drawText(juce::String());
 
     juce::Path dialTick;

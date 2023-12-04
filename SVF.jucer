@@ -2,13 +2,13 @@
 
 <JUCERPROJECT id="Ia1WtV" name="Triple Dist" projectType="audioplug" useAppConfig="0"
               addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1"
-              companyName="Audio Maki" pluginFormats="buildVST3">
+              companyName="OdioMechanics" pluginFormats="buildVST3" lv2Uri="www.OdioMechanics.com/plugins/TripleDist"
+              pluginManufacturerCode="nolv" pluginCode="TrDi">
   <MAINGROUP id="aVDl6A" name="Triple Dist">
     <GROUP id="{C005D552-7885-F369-AD63-716DB7906069}" name="Source">
       <GROUP id="{25FC119A-33E0-A9B6-8C2F-8A6E49BBEB88}" name="Components">
         <FILE id="mAyIcy" name="MyLookAndFeel.h" compile="0" resource="0" file="Source/Components/MyLookAndFeel.h"/>
-        <FILE id="CFL2lw" name="VerticalGradientMeter.h" compile="0" resource="0"
-              file="Source/Components/VerticalGradientMeter.h"/>
+        <FILE id="CFL2lw" name="VerticalMeter.h" compile="0" resource="0" file="Source/Components/VerticalMeter.h"/>
       </GROUP>
       <FILE id="RtXfFn" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
