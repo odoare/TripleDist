@@ -6,6 +6,9 @@
               companyWebsite="www.fxmechanics.com" pluginManufacturerCode="ODME"
               pluginCode="TrDi">
   <MAINGROUP id="aVDl6A" name="Triple Dist">
+    <GROUP id="{A23B307C-8A77-9B79-C429-398940587198}" name="Assets">
+      <FILE id="vefiI2" name="logo.png" compile="0" resource="1" file="Source/Assets/logo.png"/>
+    </GROUP>
     <GROUP id="{C005D552-7885-F369-AD63-716DB7906069}" name="Source">
       <GROUP id="{25FC119A-33E0-A9B6-8C2F-8A6E49BBEB88}" name="Components">
         <FILE id="mAyIcy" name="MyLookAndFeel.h" compile="0" resource="0" file="Source/Components/MyLookAndFeel.h"/>

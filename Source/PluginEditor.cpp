@@ -20,6 +20,8 @@ TripleDistAudioProcessorEditor::TripleDistAudioProcessorEditor (TripleDistAudioP
     // myLookAndFeelMagenta.setColour(juce::Colours::magenta);
     // myLookAndFeelTeal.setColour(juce::Colours::teal);
 
+    logo = juce::ImageCache::getFromMemory(BinaryData::logo_png, BinaryData::logo_pngSize);
+
     freqSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
     freqSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition::TextBoxBelow,false,0,0);
     freqSlider.setPopupDisplayEnabled(true,true,nullptr,1000);
@@ -175,6 +177,9 @@ void TripleDistAudioProcessorEditor::paint (juce::Graphics& g)
     g.drawMultiLineText ("LOW", unitXBorder+unitX+unitX/2-fontSize/3 , 3*unitYBorder+3*unitY, fontSize/2, juce::Justification::centred);
     g.drawMultiLineText ("MID", unitXBorder+3*unitX+unitX/2-fontSize/3 , 3*unitYBorder+3*unitY, fontSize/2, juce::Justification::centred);
     g.drawMultiLineText ("HIGH", unitXBorder+5*unitX+unitX/2-fontSize/3 , 2*unitYBorder+3*unitY, fontSize/2, juce::Justification::centred);
+
+    auto r = juce::Rectangle<float>(unitXBorder+3.7*unitX,unitYBorder+0.9*unitY,unitX,unitY);
+    g.drawImage(logo, r);
 
 }
 

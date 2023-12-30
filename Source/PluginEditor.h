@@ -89,5 +89,7 @@ private:
                                 verticalMeterHighL{[&]() { return audioProcessor.getRmsLevel(4,0); }},
                                 verticalMeterHighR{[&]() { return audioProcessor.getRmsLevel(4,1); }};
 
+    juce::Image logo;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TripleDistAudioProcessorEditor)
 };
