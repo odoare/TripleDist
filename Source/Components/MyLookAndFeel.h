@@ -3,9 +3,10 @@
 class MyLookAndFeel : public juce::LookAndFeel_V4
 {
 public:
-  MyLookAndFeel(juce::Colour col)
+  MyLookAndFeel(juce::Colour col,juce::String text)
   {
     setColour(col);
+    setText(text);
   }
 
   void drawRotarySlider(juce::Graphics &g, 
@@ -27,10 +28,12 @@ public:
 
     juce::Rectangle<float> dialArea(rx,ry,diameter,diameter);
     g.setColour(juce::Colours::black);
+    // g.setColour(juce::Colour::fromFloatRGBA (0.15f, 0.15f, 0.2f, 1.0f));
     //g.drawRect(dialArea);
     g.fillEllipse(dialArea);
     g.setColour(sliderColour);
     g.drawEllipse(dialArea,2.0f);
+    
     // g.drawText(juce::String());
 
     juce::Path dialTick;
@@ -60,11 +63,14 @@ public:
     g.setFont(labelArea.getHeight() * 0.8f);
     auto center = labelArea.getCentre();
    
-    juce::String labelToDisplay = juce::String(label.getText());
+    //juce::String labelToDisplay = juce::String(label.getText());
+    juce::String labelToDisplay = sliderText;
+    
     g.drawSingleLineText(labelToDisplay,
                           juce::roundToInt(center.x + g.getCurrentFont().getHorizontalScale()),
                           juce::roundToInt(center.y + g.getCurrentFont().getDescent()),
                           juce::Justification::horizontallyCentred);
+        
     }
 
     void setColour(juce::Colour newCol)
@@ -72,6 +78,12 @@ public:
       sliderColour = newCol;
     }
 
+    void setText(juce::String newText)
+    {
+      sliderText = newText;
+    }
+
 private:
   juce::Colour sliderColour;
+  juce::String sliderText;
 };

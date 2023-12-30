@@ -11,17 +11,17 @@
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
 #include <iostream>
-#include "Components/VerticalGradientMeter.h"
+#include "Components/VerticalMeter.h"
 #include "Components/MyLookAndFeel.h"
 
 //==============================================================================
 /**
 */
-class SVFAudioProcessorEditor  : public juce::AudioProcessorEditor
+class TripleDistAudioProcessorEditor  : public juce::AudioProcessorEditor
 {
 public:
-    SVFAudioProcessorEditor (SVFAudioProcessor&);
-    ~SVFAudioProcessorEditor() override;
+    TripleDistAudioProcessorEditor (TripleDistAudioProcessor&);
+    ~TripleDistAudioProcessorEditor() override;
 
     //==============================================================================
     void paint (juce::Graphics&) override;
@@ -33,18 +33,26 @@ private:
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> freqSliderAttachment;
     juce::Slider qSlider;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> qSliderAttachment;
+
+    juce::Slider inGainSlider;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> inGainSliderAttachment;
+    juce::Slider outLevelSlider;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> outLevelSliderAttachment;
+
     juce::Slider lowGainSlider;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> lowGainSliderAttachment;
     juce::Slider bandGainSlider;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> bandGainSliderAttachment;
     juce::Slider highGainSlider;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> highGainSliderAttachment;
+    
     juce::Slider lowLevelSlider;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> lowLevelSliderAttachment;
     juce::Slider bandLevelSlider;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> bandLevelSliderAttachment;
     juce::Slider highLevelSlider;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> highLevelSliderAttachment;
+
     juce::Slider lowPanSlider;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> lowPanSliderAttachment;
     juce::Slider bandPanSlider;
@@ -54,16 +62,32 @@ private:
     
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
-    SVFAudioProcessor& audioProcessor;
+    TripleDistAudioProcessor& audioProcessor;
 
-    MyLookAndFeel myLookAndFeelTeal{juce::Colours::teal},
-                  myLookAndFeelMagenta{juce::Colours::magenta},
-                  myLookAndFeelBlue{juce::Colours::blue.brighter()},
-                  myLookAndFeelGreen{juce::Colours::green.brighter()},
-                  myLookAndFeelRed{juce::Colours::red.brighter()};
+    MyLookAndFeel myLookAndFeelInGain{juce::Colours::teal.brighter(),"Gain"},
+                  myLookAndFeelOutLevel{juce::Colours::teal.brighter(),"Level"},
+                  myLookAndFeelLowGain{juce::Colours::blue.brighter(),"Drive"},
+                  myLookAndFeelLowLevel{juce::Colours::blue.brighter(),"Level"},
+                  myLookAndFeelLowPan{juce::Colours::blue.brighter(),"Pan"},
+                  myLookAndFeelBandGain{juce::Colours::green.brighter(),"Drive"},
+                  myLookAndFeelBandLevel{juce::Colours::green.brighter(),"Level"},
+                  myLookAndFeelBandPan{juce::Colours::green.brighter(),"Pan"},
+                  myLookAndFeelHighGain{juce::Colours::red.brighter(),"Drive"},
+                  myLookAndFeelHighLevel{juce::Colours::red.brighter(),"Level"},
+                  myLookAndFeelHighPan{juce::Colours::red.brighter(),"Pan"},
+                  myLookAndFeelFreq{juce::Colours::magenta.brighter(),"Freq"},
+                  myLookAndFeelQ{juce::Colours::magenta.brighter(),"Q"};
 
-    Gui::VerticalGradientMeter verticalGradientMeterInL{[&]() { return audioProcessor.getRmsLevelIn(0); }},
-                                verticalGradientMeterInR{[&]() { return audioProcessor.getRmsLevelIn(1); }};
+    Gui::VerticalMeter verticalMeterInL{[&]() { return audioProcessor.getRmsLevel(0,0); }},
+                                verticalMeterInR{[&]() { return audioProcessor.getRmsLevel(0,1); }},
+                                verticalMeterOutL{[&]() { return audioProcessor.getRmsLevel(1,0); }},
+                                verticalMeterOutR{[&]() { return audioProcessor.getRmsLevel(1,1); }},
+                                verticalMeterLowL{[&]() { return audioProcessor.getRmsLevel(2,0); }},
+                                verticalMeterLowR{[&]() { return audioProcessor.getRmsLevel(2,1); }},
+                                verticalMeterBandL{[&]() { return audioProcessor.getRmsLevel(3,0); }},
+                                verticalMeterBandR{[&]() { return audioProcessor.getRmsLevel(3,1); }},
+                                verticalMeterHighL{[&]() { return audioProcessor.getRmsLevel(4,0); }},
+                                verticalMeterHighR{[&]() { return audioProcessor.getRmsLevel(4,1); }};
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SVFAudioProcessorEditor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TripleDistAudioProcessorEditor)
 };

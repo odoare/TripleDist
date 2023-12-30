@@ -2,13 +2,14 @@
 
 <JUCERPROJECT id="Ia1WtV" name="Triple Dist" projectType="audioplug" useAppConfig="0"
               addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1"
-              companyName="Audio Maki" pluginFormats="buildVST3">
+              companyName="FX Mechanics" pluginFormats="buildVST3" version="0.1"
+              companyWebsite="www.fxmechanics.com" pluginManufacturerCode="ODME"
+              pluginCode="TrDi">
   <MAINGROUP id="aVDl6A" name="Triple Dist">
     <GROUP id="{C005D552-7885-F369-AD63-716DB7906069}" name="Source">
       <GROUP id="{25FC119A-33E0-A9B6-8C2F-8A6E49BBEB88}" name="Components">
         <FILE id="mAyIcy" name="MyLookAndFeel.h" compile="0" resource="0" file="Source/Components/MyLookAndFeel.h"/>
-        <FILE id="CFL2lw" name="VerticalGradientMeter.h" compile="0" resource="0"
-              file="Source/Components/VerticalGradientMeter.h"/>
+        <FILE id="zDZTUz" name="VerticalMeter.h" compile="0" resource="0" file="Source/Components/VerticalMeter.h"/>
       </GROUP>
       <FILE id="RtXfFn" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
@@ -39,7 +40,7 @@
   <EXPORTFORMATS>
     <LINUX_MAKE targetFolder="Builds/LinuxMakefile">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="0" name="Release" targetName="SVF"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="TripleDist" optimisation="6"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_audio_basics" path="../../../JUCE/JUCE/modules"/>
@@ -57,5 +58,25 @@
         <MODULEPATH id="juce_dsp" path="../../JUCE/JUCE/modules"/>
       </MODULEPATHS>
     </LINUX_MAKE>
+    <VS2022 targetFolder="Builds/VisualStudio2022">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="0" name="Release"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_audio_basics" path="../../juce"/>
+        <MODULEPATH id="juce_audio_devices" path="../../juce"/>
+        <MODULEPATH id="juce_audio_formats" path="../../juce"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="../../juce"/>
+        <MODULEPATH id="juce_audio_processors" path="../../juce"/>
+        <MODULEPATH id="juce_audio_utils" path="../../juce"/>
+        <MODULEPATH id="juce_core" path="../../juce"/>
+        <MODULEPATH id="juce_data_structures" path="../../juce"/>
+        <MODULEPATH id="juce_dsp" path="../../juce"/>
+        <MODULEPATH id="juce_events" path="../../juce"/>
+        <MODULEPATH id="juce_graphics" path="../../juce"/>
+        <MODULEPATH id="juce_gui_basics" path="../../juce"/>
+        <MODULEPATH id="juce_gui_extra" path="../../juce"/>
+      </MODULEPATHS>
+    </VS2022>
   </EXPORTFORMATS>
 </JUCERPROJECT>
