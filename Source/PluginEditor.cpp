@@ -20,7 +20,7 @@ TripleDistAudioProcessorEditor::TripleDistAudioProcessorEditor (TripleDistAudioP
     // myLookAndFeelMagenta.setColour(juce::Colours::magenta);
     // myLookAndFeelTeal.setColour(juce::Colours::teal);
 
-    logo = juce::ImageCache::getFromMemory(BinaryData::logo_png, BinaryData::logo_pngSize);
+    logo = juce::ImageCache::getFromMemory(BinaryData::logo686_png, BinaryData::logo686_pngSize);
 
     freqSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
     freqSlider.setTextBoxStyle(juce::Slider::TextEntryBoxPosition::TextBoxBelow,false,0,0);
