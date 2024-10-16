@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<magic>
+  <Styles>
+    <Style name="default">
+      <Nodes/>
+      <Classes>
+        <plot-view border="2" background-color="black" border-color="silver" display="contents"/>
+        <nomargin margin="0" padding="0" border="0"/>
+        <group margin="5" padding="5" border="2" flex-direction="column"/>
+        <transparent background-color="transparentblack"/>
+      </Classes>
+      <Types>
+        <Slider border="0" slider-textbox="textbox-below"/>
+        <ToggleButton border="0" max-height="50" caption-size="0" text="Active"/>
+        <TextButton border="0" max-height="50" caption-size="0"/>
+        <ComboBox border="0" max-height="50" caption-size="0"/>
+        <Plot border="0" margin="0" padding="0" background-color="00000000"
+              radius="0"/>
+        <XYDragComponent border="0" margin="0" padding="0" background-color="00000000"
+                         radius="0"/>
+      </Types>
+      <Palettes>
+        <default/>
+      </Palettes>
+    </Style>
+  </Styles>
+  <View id="root" resizable="1" resize-corner="1" flex-direction="column"
+        border-color="" background-color="" margin="0" padding="0" background-gradient="linear-gradient(0,0% ff1b263b,100% ff000000)"
+        flex-align-self="stretch" width="550" height="450" min-width="">
+    <View id="Master" flex-grow="0.6" margin="5" padding="1" caption=""
+          background-color="" background-gradient="linear-gradient(0,0% ff1b263b,100% ff000000)">
+      <View flex-direction="column" background-color="00272727">
+        <View background-image="logo686_png" background-color="00000000" margin="0"
+              padding="0"/>
+        <View flex-grow="0.1"/>
+        <Label caption="Triple Dist" flex-grow="0.4" background-color="00000000"/>
+        <Label caption="v0.2" flex-grow="0.4" background-color="00000000"/>
+      </View>
+      <Meter flex-grow="0.5" source="inputLevel" bar-fill-color="FFFF4D00"
+             background-color="00000000" bar-background-color="FF000000" margin="0"
+             padding="5"/>
+      <Slider slider-type="rotary-horizontal-vertical" lookAndFeel="FX-Mechanics"
+              margin="0" padding="0" parameter="InGain" background-color="00000000"
+              rotary-fill="FF000000" caption="In Gain" caption-placement="centred-top"
+              rotary-outline="FFBF3A00" slider-track="30FF4D00" slider-thumb="FFBF3A00"/>
+      <Slider slider-type="rotary-horizontal-vertical" lookAndFeel="FX-Mechanics"
+              margin="0" padding="0" parameter="Frequency" background-color="00000000"
+              rotary-fill="FF000000" caption="Frequency" caption-placement="centred-top"
+              slider-thumb="FFBF3A00" slider-track="30FF4D00" rotary-outline="FFBF3A00"/>
+      <Slider slider-type="rotary-horizontal-vertical" lookAndFeel="FX-Mechanics"
+              margin="0" padding="0" parameter="Q" background-color="00000000"
+              rotary-fill="FF000000" caption="Q" caption-placement="centred-top"
+              slider-thumb="FFBF3A00" slider-track="30FF4D00" rotary-outline="FFBF3A00"/>
+      <Slider slider-type="rotary-horizontal-vertical" lookAndFeel="FX-Mechanics"
+              margin="0" padding="0" parameter="OutLevel" background-color="00000000"
+              rotary-fill="FF000000" caption="Out Gain" caption-placement="centred-top"
+              slider-thumb="FFBF3A00" slider-track="30FF4D00" rotary-outline="FFBF3A00"/>
+      <Meter flex-grow="0.5" source="outputLevel" bar-background-color="FF000000"
+             background-color="00000000" margin="0" padding="5" bar-fill-color="FFFF4D00"/>
+    </View>
+    <View margin="0" padding="5" background-color="" background-gradient="linear-gradient(0,0% ff1b263b,100% ff000000)">
+      <View id="Low" flex-direction="column" margin="0" padding="0" background-color="1A0060FF"
+            border-color="" caption="LOW">
+        <View margin="0" padding="0" border-color="" background-color="00000000">
+          <Slider slider-type="rotary-horizontal-vertical" parameter="LowGain"
+                  margin="0" padding="0" lookAndFeel="FX-Mechanics" slider-track="300060FF"
+                  rotary-fill="FF000000" background-color="00000000" border-color=""
+                  caption="Gain" slider-thumb="FF0060FF" rotary-outline="FF0060FF"/>
+          <Slider parameter="LowPan" slider-type="rotary-horizontal-vertical" margin="0"
+                  padding="0" lookAndFeel="FX-Mechanics" rotary-fill="FF000000"
+                  background-color="00000000" caption="Pan" slider-thumb="FF0060FF"
+                  slider-track="300060FF" rotary-outline="FF0060FF"/>
+        </View>
+        <View margin="0" padding="0" background-color="00000000">
+          <Slider parameter="LowLevel" slider-type="rotary-horizontal-vertical"
+                  margin="0" padding="0" lookAndFeel="FX-Mechanics" rotary-fill="FF000000"
+                  background-color="00000000" caption="Level" slider-thumb="FF0060FF"
+                  slider-track="300060FF" rotary-outline="FF0060FF"/>
+          <Meter border-color="00000000" source="lowLevel" margin="0" padding="10"
+                 background-color="00000000" bar-background-color="FF000000" flex-grow="0.4"
+                 bar-fill-color="FF0060FF" flex-align-self=""/>
+        </View>
+      </View>
+      <View id="Mid" flex-direction="column" margin="0" padding="0" background-color="1D00FF39"
+            caption="MID">
+        <View margin="0" padding="0" background-color="00000000">
+          <Slider lookAndFeel="FX-Mechanics" slider-type="rotary-horizontal-vertical"
+                  margin="0" padding="0" parameter="BandGain" rotary-fill="FF000000"
+                  background-color="00000000" caption="Gain" slider-thumb="FF00BA2A"
+                  slider-track="3000FF39" rotary-outline="FF00BA2A"/>
+          <Slider lookAndFeel="FX-Mechanics" slider-type="rotary-horizontal-vertical"
+                  margin="0" padding="0" parameter="BandPan" rotary-fill="FF000000"
+                  background-color="00000000" caption="Pan" slider-thumb="FF00BA2A"
+                  slider-track="3000FF39" rotary-outline="FF00BA2A"/>
+        </View>
+        <View margin="0" padding="0" background-color="00000000">
+          <Slider lookAndFeel="FX-Mechanics" slider-type="rotary-horizontal-vertical"
+                  margin="0" padding="0" parameter="BandLevel" rotary-fill="FF000000"
+                  background-color="00000000" slider-thumb="FF00BA2A" slider-track="3000FF39"
+                  rotary-outline="FF00BA2A" caption="Level"/>
+          <Meter flex-grow="0.4" bar-background-color="FF000000" bar-fill-color="FF00FF39"
+                 source="midLevel" background-color="00000000" margin="0" padding="10"
+                 border-color="00000000"/>
+        </View>
+      </View>
+      <View id="High" flex-direction="column" margin="0" padding="0" background-color="1DFFF900"
+            caption="HIGH">
+        <View margin="0" padding="0" background-color="00000000">
+          <Slider lookAndFeel="FX-Mechanics" margin="0" padding="0" parameter="HighGain"
+                  rotary-fill="FF000000" background-color="00000000" caption="Gain"
+                  slider-thumb="FFD4D001" slider-track="30FFF900" rotary-outline="FFD4D000"/>
+          <Slider margin="0" padding="0" lookAndFeel="FX-Mechanics" parameter="HighPan"
+                  rotary-fill="FF000000" background-color="00000000" slider-thumb="FFD4D001"
+                  slider-track="30FFF900" rotary-outline="FFD4D001" caption="Pan"/>
+        </View>
+        <View margin="0" padding="0" background-color="00000000">
+          <Slider margin="0" padding="0" lookAndFeel="FX-Mechanics" parameter="HighLevel"
+                  rotary-fill="FF000000" background-color="00000000" slider-thumb="FFD4D001"
+                  slider-track="30FFF900" rotary-outline="FFD4D001" caption="Level"/>
+          <Meter bar-background-color="FF000000" source="highLevel" bar-fill-color="FFFFF900"
+                 flex-grow="0.4" margin="0" padding="10" background-color="00000000"/>
+        </View>
+      </View>
+    </View>
+  </View>
+</magic>

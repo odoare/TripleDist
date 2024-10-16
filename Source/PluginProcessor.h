@@ -7,13 +7,15 @@
 */
 
 #pragma once
+#define FOLEYS_SHOW_GUI_EDITOR_PALLETTE 0
+#define NCHANNELS 2
 
 #include <JuceHeader.h>
 
 //==============================================================================
 /**
 */
-class TripleDistAudioProcessor  : public juce::AudioProcessor
+class TripleDistAudioProcessor  : public foleys::MagicProcessor
 {
 public:
     //==============================================================================
@@ -31,8 +33,8 @@ public:
     void processBlock (juce::AudioBuffer<float>&, juce::MidiBuffer&) override;
 
     //==============================================================================
-    juce::AudioProcessorEditor* createEditor() override;
-    bool hasEditor() const override;
+    // juce::AudioProcessorEditor* createEditor() override;
+    // bool hasEditor() const override;
 
     //==============================================================================
     const juce::String getName() const override;
@@ -50,35 +52,29 @@ public:
     void changeProgramName (int index, const juce::String& newName) override;
 
     //==============================================================================
-    void getStateInformation (juce::MemoryBlock& destData) override;
-    void setStateInformation (const void* data, int sizeInBytes) override;
+    // void getStateInformation (juce::MemoryBlock& destData) override;
+    // void setStateInformation (const void* data, int sizeInBytes) override;
 
     static juce::AudioProcessorValueTreeState::ParameterLayout createParameters();  
     juce::AudioProcessorValueTreeState apvts{*this,nullptr,"Parameters",createParameters()};
 
-    float getRmsLevel(const int bus, const int channel);
+    // float getRmsLevel(const int bus, const int channel);
     // float getRmsLevelLow(const int channel);
-     
 
 private:
 
-    static const unsigned int nChannels = 2 ;
-
-    float low[nChannels],
-          band[nChannels],
-          high[nChannels];
-
-    juce::LinearSmoothedValue<float> rmsLevelIn[nChannels],
-                                      rmsLevelOut[nChannels], 
-                                      rmsLevelLow[nChannels],
-                                      rmsLevelBand[nChannels],
-                                      rmsLevelHigh[nChannels];
-    // juce::LinearSmoothedValue<float> rmsLevelLowL, rmsLevelLowR;
+    float low[NCHANNELS],
+          band[NCHANNELS],
+          high[NCHANNELS];
 
     juce::AudioBuffer<float> lowBuffer,bandBuffer,highBuffer ;
-    
- 
 
+    foleys::MagicLevelSource* inputLevel;
+    foleys::MagicLevelSource* outputLevel;
+    foleys::MagicLevelSource* lowLevel;
+    foleys::MagicLevelSource* midLevel;
+    foleys::MagicLevelSource* highLevel;
+ 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TripleDistAudioProcessor)
 };

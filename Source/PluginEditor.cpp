@@ -153,7 +153,7 @@ void TripleDistAudioProcessorEditor::paint (juce::Graphics& g)
     float unitYBorder = border*getHeight();
     auto unitX = (1-2*border)*getWidth()/6;
     auto unitY = (1-2*border)*getHeight()/4;
-    
+
     // (Our component is opaque, so we must completely fill the background with a solid colour)
     // g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
     // g.fillAll (juce::Colour::fromFloatRGBA (0.1f, 0.1f, 0.15f, 1.0f));
