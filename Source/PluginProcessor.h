@@ -7,7 +7,7 @@
 */
 
 #pragma once
-#define FOLEYS_SHOW_GUI_EDITOR_PALLETTE 0
+// #define FOLEYS_SHOW_GUI_EDITOR_PALLETTE 1
 #define NCHANNELS 2
 
 #include <JuceHeader.h>

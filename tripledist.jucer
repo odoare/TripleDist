@@ -60,7 +60,7 @@
         <MODULEPATH id="juce_cryptography" path="../../JUCE/JUCE/modules"/>
       </MODULEPATHS>
     </LINUX_MAKE>
-    <VS2022 targetFolder="Builds/VisualStudio2022">
+    <VS2022 targetFolder="Builds/VisualStudio2022" IPP1ALibrary="true" MKL1ALibrary="Parallel">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="0" name="Release"/>
       </CONFIGURATIONS>
