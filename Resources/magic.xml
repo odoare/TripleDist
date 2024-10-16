@@ -42,7 +42,7 @@
       </View>
       <Meter flex-grow="0.5" source="inputLevel" bar-fill-color="FFFF4D00"
              bar-background-color="FF000000" margin="0" padding="5" background-color=""
-             outline-color="00000000"/>
+             outline-color="00000000" caption="IN"/>
       <Slider slider-type="rotary-horizontal-vertical" lookAndFeel="FX-Mechanics"
               margin="0" padding="0" parameter="InGain" background-color="00000000"
               rotary-fill="FF000000" caption="In Gain" caption-placement="centred-top"
@@ -65,7 +65,7 @@
               slider-text-outline="00000000" slider-textbox="textbox-above"/>
       <Meter flex-grow="0.5" source="outputLevel" bar-background-color="FF000000"
              margin="0" padding="5" bar-fill-color="FFFF4D00" background-color=""
-             outline-color="00000000"/>
+             outline-color="00000000" caption="OUT"/>
     </View>
     <View margin="0" padding="5" background-color="" background-gradient="linear-gradient(0,0% ff1b263b,100% ff000000)">
       <View id="Low" flex-direction="column" margin="0" padding="0" background-color="1A0060FF"
