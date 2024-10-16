@@ -2,29 +2,23 @@
 
 <JUCERPROJECT id="Ia1WtV" name="Triple Dist" projectType="audioplug" useAppConfig="0"
               addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1"
-              companyName="FX Mechanics" pluginFormats="buildVST3" version="0.1"
-              companyWebsite="www.fxmechanics.com" pluginManufacturerCode="ODME"
+              companyName="FX-Mechanics" pluginFormats="buildVST3" version="0.2"
+              companyWebsite="fx-mechanics.com" pluginManufacturerCode="FXME"
               pluginCode="TrDi">
   <MAINGROUP id="aVDl6A" name="Triple Dist">
-    <GROUP id="{A23B307C-8A77-9B79-C429-398940587198}" name="Assets">
-      <FILE id="vefiI2" name="logo.png" compile="0" resource="1" file="Source/Assets/logo.png"/>
-      <FILE id="cciK44" name="logo686.png" compile="0" resource="1" file="Source/Assets/logo686.png"/>
+    <GROUP id="{A23B307C-8A77-9B79-C429-398940587198}" name="Resources">
+      <FILE id="cciK44" name="logo686.png" compile="0" resource="1" file="Resources/logo686.png"/>
+      <FILE id="zUq2Z5" name="magic.xml" compile="0" resource="1" file="Resources/magic.xml"/>
     </GROUP>
     <GROUP id="{C005D552-7885-F369-AD63-716DB7906069}" name="Source">
-      <GROUP id="{25FC119A-33E0-A9B6-8C2F-8A6E49BBEB88}" name="Components">
-        <FILE id="mAyIcy" name="MyLookAndFeel.h" compile="0" resource="0" file="Source/Components/MyLookAndFeel.h"/>
-        <FILE id="zDZTUz" name="VerticalMeter.h" compile="0" resource="0" file="Source/Components/VerticalMeter.h"/>
-      </GROUP>
       <FILE id="RtXfFn" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
       <FILE id="Sy0ibO" name="PluginProcessor.h" compile="0" resource="0"
             file="Source/PluginProcessor.h"/>
-      <FILE id="Akb1MI" name="PluginEditor.cpp" compile="1" resource="0"
-            file="Source/PluginEditor.cpp"/>
-      <FILE id="oNB2sq" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
     </GROUP>
   </MAINGROUP>
   <MODULES>
+    <MODULE id="foleys_gui_magic" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
@@ -33,6 +27,7 @@
     <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_cryptography" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_dsp" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
@@ -40,7 +35,8 @@
     <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
   </MODULES>
-  <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"/>
+  <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"
+               FOLEYS_ENABLE_BINARY_DATA="1" FOLEYS_SHOW_GUI_EDITOR_PALLETTE="0"/>
   <EXPORTFORMATS>
     <LINUX_MAKE targetFolder="Builds/LinuxMakefile">
       <CONFIGURATIONS>
@@ -60,9 +56,11 @@
         <MODULEPATH id="juce_gui_basics" path="../../../JUCE/JUCE/modules"/>
         <MODULEPATH id="juce_gui_extra" path="../../../JUCE/JUCE/modules"/>
         <MODULEPATH id="juce_dsp" path="../../JUCE/JUCE/modules"/>
+        <MODULEPATH id="foleys_gui_magic" path="../../JUCE/user_modules"/>
+        <MODULEPATH id="juce_cryptography" path="../../JUCE/JUCE/modules"/>
       </MODULEPATHS>
     </LINUX_MAKE>
-    <VS2022 targetFolder="Builds/VisualStudio2022">
+    <VS2022 targetFolder="Builds/VisualStudio2022" IPP1ALibrary="true" MKL1ALibrary="Parallel">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="0" name="Release"/>
       </CONFIGURATIONS>
@@ -80,6 +78,8 @@
         <MODULEPATH id="juce_graphics" path="../../juce"/>
         <MODULEPATH id="juce_gui_basics" path="../../juce"/>
         <MODULEPATH id="juce_gui_extra" path="../../juce"/>
+        <MODULEPATH id="foleys_gui_magic" path="../../JUCE/user_modules"/>
+        <MODULEPATH id="juce_cryptography" path="../../JUCE/JUCE/modules"/>
       </MODULEPATHS>
     </VS2022>
   </EXPORTFORMATS>

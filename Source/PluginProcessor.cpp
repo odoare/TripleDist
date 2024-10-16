@@ -7,21 +7,17 @@
 */
 
 #include "PluginProcessor.h"
-#include "PluginEditor.h"
 
 //==============================================================================
 TripleDistAudioProcessor::TripleDistAudioProcessor()
-#ifndef JucePlugin_PreferredChannelConfigurations
-     : AudioProcessor (BusesProperties()
-                     #if ! JucePlugin_IsMidiEffect
-                      #if ! JucePlugin_IsSynth
-                       .withInput  ("Input",  juce::AudioChannelSet::stereo(), true)
-                      #endif
-                       .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
-                     #endif
-                       )
-#endif
 {
+    magicState.setGuiValueTree (BinaryData::magic_xml, BinaryData::magic_xmlSize);
+    FOLEYS_SET_SOURCE_PATH("/home/od/src/Projects/TripleDist/Resources/magic.xml");
+    inputLevel = magicState.createAndAddObject<foleys::MagicLevelSource>("inputLevel");
+    outputLevel = magicState.createAndAddObject<foleys::MagicLevelSource>("outputLevel");
+    lowLevel = magicState.createAndAddObject<foleys::MagicLevelSource>("lowLevel");
+    midLevel = magicState.createAndAddObject<foleys::MagicLevelSource>("midLevel");
+    highLevel = magicState.createAndAddObject<foleys::MagicLevelSource>("highLevel");
 }
 
 TripleDistAudioProcessor::~TripleDistAudioProcessor()
@@ -95,28 +91,22 @@ void TripleDistAudioProcessor::prepareToPlay (double sampleRate, int samplesPerB
 {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
-    for (unsigned int n=0;n<TripleDistAudioProcessor::nChannels;n++)
+    for (unsigned int n=0;n<NCHANNELS;n++)
     {
         TripleDistAudioProcessor::low[n]=0.0f;
         TripleDistAudioProcessor::band[n]=0.0f;
         TripleDistAudioProcessor::high[n]=0.0f;
     }
 
-    for (int channel=0;channel<nChannels;channel++)
-    {
-        rmsLevelIn[channel].reset(sampleRate,0.5);
-        rmsLevelIn[channel].setCurrentAndTargetValue(-30.0f);
-    }
+    lowBuffer.setSize(NCHANNELS,samplesPerBlock);
+    bandBuffer.setSize(NCHANNELS,samplesPerBlock);
+    highBuffer.setSize(NCHANNELS,samplesPerBlock);
 
-    lowBuffer.setSize(2,samplesPerBlock);
-    bandBuffer.setSize(2,samplesPerBlock);
-    highBuffer.setSize(2,samplesPerBlock);
-
-
-    // rmsLevelLowL.reset(sampleRate,0.5);
-    // rmsLevelLowR.reset(sampleRate,0.5);
-    // rmsLevelLowL.setCurrentAndTargetValue(-30.0f);
-    // rmsLevelLowR.setCurrentAndTargetValue(-30.0f);
+    inputLevel->setupSource(NCHANNELS,sampleRate,100);
+    outputLevel->setupSource(NCHANNELS,sampleRate,100);
+    lowLevel->setupSource(NCHANNELS,sampleRate,100);
+    midLevel->setupSource(NCHANNELS,sampleRate,100);
+    highLevel->setupSource(NCHANNELS,sampleRate,100);
 }
 
 void TripleDistAudioProcessor::releaseResources()
@@ -125,34 +115,18 @@ void TripleDistAudioProcessor::releaseResources()
     // spare memory, etc.
 }
 
-#ifndef JucePlugin_PreferredChannelConfigurations
 bool TripleDistAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
 {
-  #if JucePlugin_IsMidiEffect
-    juce::ignoreUnused (layouts);
-    return true;
-  #else
-    // This is the place where you check if the layout is supported.
-    // In this template code we only support mono or stereo.
-    // Some plugin hosts, such as certain GarageBand versions, will only
-    // load plugins that support stereo bus layouts.
-    if (layouts.getMainOutputChannelSet() != juce::AudioChannelSet::mono()
-     && layouts.getMainOutputChannelSet() != juce::AudioChannelSet::stereo())
+    if (layouts.getMainInputChannelSet() != juce::AudioChannelSet::stereo()
+     || layouts.getMainOutputChannelSet() != juce::AudioChannelSet::stereo())
         return false;
 
-    // This checks if the input layout matches the output layout
-   #if ! JucePlugin_IsSynth
-    if (layouts.getMainOutputChannelSet() != layouts.getMainInputChannelSet())
-        return false;
-   #endif
-
     return true;
-  #endif
 }
-#endif
 
 void TripleDistAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
+
     juce::ScopedNoDenormals noDenormals;
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
@@ -182,17 +156,10 @@ void TripleDistAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
 
+    inputLevel->pushSamples(buffer);
+
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
-        rmsLevelIn[channel].skip(buffer.getNumSamples());
-        {
-            const auto value = juce::Decibels::gainToDecibels(buffer.getRMSLevel(channel,0,buffer.getNumSamples()));
-            if (value < rmsLevelIn[channel].getCurrentValue())
-                rmsLevelIn[channel].setTargetValue(value);
-            else
-                rmsLevelIn[channel].setCurrentAndTargetValue(value);
-        }
-
         auto lp = ((1-channel)+(2*channel-1)*lowp)*lowg ;
         auto bp = ((1-channel)+(2*channel-1)*bandp)*bandg ;
         auto hp = ((1-channel)+(2*channel-1)*highp)*highg ;
@@ -214,78 +181,13 @@ void TripleDistAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
                                     + bandData[sample]
                                     + highData[sample]);
         }
-        rmsLevelOut[channel].skip(buffer.getNumSamples());
-        {
-            const auto value = juce::Decibels::gainToDecibels(buffer.getRMSLevel(channel,0,buffer.getNumSamples()));
-            if (value < rmsLevelOut[channel].getCurrentValue())
-                rmsLevelOut[channel].setTargetValue(value);
-            else
-                rmsLevelOut[channel].setCurrentAndTargetValue(value);
-        }
-        rmsLevelLow[channel].skip(lowBuffer.getNumSamples());
-        {
-            const auto value = juce::Decibels::gainToDecibels(lowBuffer.getRMSLevel(channel,0,lowBuffer.getNumSamples()));
-            if (value < rmsLevelLow[channel].getCurrentValue())
-                rmsLevelLow[channel].setTargetValue(value);
-            else
-                rmsLevelLow[channel].setCurrentAndTargetValue(value);
-        }
-        rmsLevelBand[channel].skip(bandBuffer.getNumSamples());
-        {
-            const auto value = juce::Decibels::gainToDecibels(bandBuffer.getRMSLevel(channel,0,bandBuffer.getNumSamples()));
-            if (value < rmsLevelBand[channel].getCurrentValue())
-                rmsLevelBand[channel].setTargetValue(value);
-            else
-                rmsLevelBand[channel].setCurrentAndTargetValue(value);
-        }
-        rmsLevelHigh[channel].skip(highBuffer.getNumSamples());
-        {
-            const auto value = juce::Decibels::gainToDecibels(highBuffer.getRMSLevel(channel,0,highBuffer.getNumSamples()));
-            if (value < rmsLevelHigh[channel].getCurrentValue())
-                rmsLevelHigh[channel].setTargetValue(value);
-            else
-                rmsLevelHigh[channel].setCurrentAndTargetValue(value);
-        }
     }
+    lowLevel->pushSamples(lowBuffer);
+    midLevel->pushSamples(bandBuffer);
+    highLevel->pushSamples(highBuffer);  
+    outputLevel->pushSamples(buffer);
 }
 
-//==============================================================================
-bool TripleDistAudioProcessor::hasEditor() const
-{
-    return true; // (change this to false if you choose to not supply an editor)
-}
-
-juce::AudioProcessorEditor* TripleDistAudioProcessor::createEditor()
-{
-    //return new juce::GenericAudioProcessorEditor(*this);
-    return new TripleDistAudioProcessorEditor (*this);
-}
-
-//==============================================================================
-void TripleDistAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
-{
-    juce::MemoryOutputStream mos(destData, true);
-    apvts.state.writeToStream(mos);
-}
-
-void TripleDistAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
-{
-    auto tree = juce::ValueTree::readFromData(data,sizeInBytes);
-    if (tree.isValid())
-    {
-        apvts.replaceState(tree);
-    }
-}
-
-float TripleDistAudioProcessor::getRmsLevel(const int bus, const int channel)
-{
-    if (bus==0) return rmsLevelIn[channel].getCurrentValue();
-    else if (bus==1) return rmsLevelOut[channel].getCurrentValue();
-    else if (bus==2) return rmsLevelLow[channel].getCurrentValue();
-    else if (bus==3) return rmsLevelBand[channel].getCurrentValue();
-    else if (bus==4) return rmsLevelHigh[channel].getCurrentValue();
-    else return 0.f;
-}
 
 //==============================================================================
 // This creates new instances of the plugin..
@@ -296,11 +198,6 @@ juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 
 juce::AudioProcessorValueTreeState::ParameterLayout TripleDistAudioProcessor::createParameters()
 {
-    // std::vector<std::unique_ptr<juce::RangedAudioParameter>> params ;
-    // params.push_back (std::make_unique<juce::AudioParameterFloat>("Gain","Gain",0.0f,1.0f,0.5f));
-    // params.push_back (std::make_unique<juce::AudioParameterBool>("Phase","Phase",false));
-
-    // return {params.begin(),params.end()};
 
     juce::AudioProcessorValueTreeState::ParameterLayout layout;
     layout.add(std::make_unique<juce::AudioParameterFloat>("Frequency","Frequency",20.0f,10000.0f,1000.0f));
